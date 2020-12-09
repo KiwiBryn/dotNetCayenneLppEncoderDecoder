@@ -22,6 +22,34 @@ namespace devMobile.IoT.CayenneLpp
    [TestClass]
    public class Temperature
    {
+      [ExpectedException(typeof(ApplicationException))]
+      [TestMethod]
+      public void BufferMinimumTooShortTwo()
+      {
+         Encoder encoder = new Encoder(7);
+
+         encoder.TemperatureAdd(0, 1.23f);
+         encoder.TemperatureAdd(1, 4.56f);
+      }
+
+      [TestMethod]
+      public void BufferMinimumJustRight()
+      {
+         Encoder encoder = new Encoder(8);
+
+         encoder.TemperatureAdd(0, 1.23f);
+         encoder.TemperatureAdd(1, 4.56f);
+      }
+
+      [TestMethod]
+      public void BufferMinimumTooLong()
+      {
+         Encoder encoder = new Encoder(9);
+
+         encoder.TemperatureAdd(0, 1.23f);
+         encoder.TemperatureAdd(1, 4.56f);
+      }
+
       [TestMethod]
       public void MyDevicesExampleOneTemperature()
       {
@@ -51,207 +79,136 @@ namespace devMobile.IoT.CayenneLpp
          Assert.AreEqual("03670110056700FF", bcdText);
       }
 
-      /*
       [TestMethod]
-      public void OnlyOne()
-      {
-         Encoder encoder = new Encoder(3);
-
-         encoder.TemperatureAdd(0, true);
-
-         string bcdText = encoder.Bcd();
-
-         Assert.AreEqual(bcdText.Length, 6);
-
-         Assert.AreEqual("000001", bcdText);
-      }
-
-
-      [TestMethod]
-      public void OnlyOneFalse()
-      {
-         Encoder encoder = new Encoder(3);
-
-         encoder.TemperatureAdd(0, false);
-
-         string bcdText = encoder.Bcd();
-
-         Assert.AreEqual(bcdText.Length, 6);
-
-         Assert.AreEqual("000000", bcdText);
-      }
-      */
-      [ExpectedException(typeof(ApplicationException))]
-      [TestMethod]
-      public void BufferMinimumTooShortTwo()
-      {
-         Encoder encoder = new Encoder(7);
-
-         encoder.TemperatureAdd(0, 1.23f);
-         encoder.TemperatureAdd(1, 4.56f);
-      }
-      /*
-      [TestMethod]
-      public void TwoTrue()
-      {
-         Encoder encoder = new Encoder(6);
-
-         encoder.TemperatureAdd(0, true);
-         encoder.TemperatureAdd(5, true);
-
-         string bcdText = encoder.Bcd();
-
-         Assert.AreEqual(bcdText.Length, 12);
-
-         Assert.AreEqual("000001050001", bcdText);
-      }
-
-      [TestMethod]
-      public void TwoTrueFalse()
-      {
-         Encoder encoder = new Encoder(6);
-
-         encoder.TemperatureAdd(0, true);
-         encoder.TemperatureAdd(1, false);
-
-         string bcdText = encoder.Bcd();
-
-         Assert.AreEqual(bcdText.Length, 12);
-
-         Assert.AreEqual("000001010000", bcdText);
-      }
-
-
-      [TestMethod]
-      public void TwoFalse()
-      {
-         Encoder encoder = new Encoder(6);
-
-         encoder.TemperatureAdd(0, false);
-         encoder.TemperatureAdd(1, false);
-
-         string bcdText = encoder.Bcd();
-
-         Assert.AreEqual(bcdText.Length, 12);
-
-         Assert.AreEqual("000000010000", bcdText);
-      }
-
-      [TestMethod]
-      public void TwoFalseTrue()
-      {
-         Encoder encoder = new Encoder(6);
-
-         encoder.TemperatureAdd(0, false);
-         encoder.TemperatureAdd(1, true);
-
-         string bcdText = encoder.Bcd();
-
-         Assert.AreEqual(bcdText.Length, 12);
-
-         Assert.AreEqual("000000010001", bcdText);
-      }
-
-      [ExpectedException(typeof(ApplicationException))]
-      [TestMethod]
-      public void BufferMinimumTooLong()
-      {
-         Encoder encoder = new Encoder(3);
-
-         encoder.TemperatureAdd(0, true);
-         encoder.DigitalInputAdd(1, true);
-      }
-
-      [TestMethod]
-      public void BufferMaximum()
+      public void ZeroValue()
       {
          Encoder encoder = new Encoder(51);
+         string bcdText;
 
-         encoder.TemperatureAdd(0, true);
-         encoder.TemperatureAdd(1, true);
-         encoder.TemperatureAdd(2, true);
-         encoder.TemperatureAdd(3, true);
-         encoder.TemperatureAdd(4, true);
+         encoder.TemperatureAdd(0,0);
+         bcdText = encoder.Bcd();
 
-         encoder.TemperatureAdd(6, true);
-         encoder.TemperatureAdd(6, true);
-         encoder.TemperatureAdd(7, true);
-         encoder.TemperatureAdd(8, true);
-         encoder.TemperatureAdd(9, true);
-
-         encoder.TemperatureAdd(10, true);
-         encoder.TemperatureAdd(11, true);
-         encoder.TemperatureAdd(12, true);
-         encoder.TemperatureAdd(13, true);
-         encoder.TemperatureAdd(14, true);
-
-         encoder.TemperatureAdd(15, true);
-         encoder.TemperatureAdd(16, true);
+         Assert.AreEqual(8, bcdText.Length);
+         Assert.AreEqual("00670000", bcdText);
       }
 
-      [ExpectedException(typeof(ApplicationException))]
       [TestMethod]
-      public void BufferMaximumTooLong()
+      public void ZerothPositiveValues()
       {
          Encoder encoder = new Encoder(51);
+         string bcdText;
 
-         encoder.TemperatureAdd(0, true);
-         encoder.TemperatureAdd(1, true);
-         encoder.TemperatureAdd(2, true);
-         encoder.TemperatureAdd(3, true);
-         encoder.TemperatureAdd(4, true);
+         encoder.TemperatureAdd(0, 0.0f);
+         encoder.TemperatureAdd(1, 0.1f);
+         encoder.TemperatureAdd(2, 0.2f);
+         encoder.TemperatureAdd(3, 0.3f);
+         encoder.TemperatureAdd(4, 0.4f);
+         encoder.TemperatureAdd(5, 0.5f);
+         encoder.TemperatureAdd(6, 0.6f);
+         encoder.TemperatureAdd(7, 0.7f);
+         encoder.TemperatureAdd(8, 0.8f);
+         encoder.TemperatureAdd(9, 0.9f);
+         bcdText = encoder.Bcd();
 
-         encoder.TemperatureAdd(6, true);
-         encoder.TemperatureAdd(6, true);
-         encoder.TemperatureAdd(7, true);
-         encoder.TemperatureAdd(8, true);
-         encoder.TemperatureAdd(9, true);
-
-         encoder.TemperatureAdd(10, true);
-         encoder.TemperatureAdd(11, true);
-         encoder.TemperatureAdd(12, true);
-         encoder.TemperatureAdd(13, true);
-         encoder.TemperatureAdd(14, true);
-
-         encoder.TemperatureAdd(15, true);
-         encoder.TemperatureAdd(16, true);
-         encoder.TemperatureAdd(17, true);
-         encoder.TemperatureAdd(18, true);
-         encoder.TemperatureAdd(19, true);
-
-         encoder.TemperatureAdd(20, true);
-         encoder.TemperatureAdd(21, true);
-         encoder.TemperatureAdd(22, true);
+         Assert.AreEqual(80, bcdText.Length);
+         Assert.AreEqual("00670000 01670001 02670002 03670003 04670004 05670005 06670006 07670007 08670008 09670009".Replace(" ",""), bcdText);
       }
-   */
+
+      [TestMethod]
+      public void ZerothPositiveValuesRounding()
+      {
+         Encoder encoder = new Encoder(51);
+         string bcdText;
+
+         encoder.TemperatureAdd(0, 0.10f);
+         encoder.TemperatureAdd(1, 0.11f);
+         encoder.TemperatureAdd(2, 0.12f);
+         encoder.TemperatureAdd(3, 0.13f);
+         encoder.TemperatureAdd(4, 0.14f);
+         encoder.TemperatureAdd(5, 0.15f);
+         encoder.TemperatureAdd(6, 0.16f);
+         encoder.TemperatureAdd(7, 0.17f);
+         encoder.TemperatureAdd(8, 0.18f);
+         encoder.TemperatureAdd(9, 0.19f);
+         bcdText = encoder.Bcd();
+
+         Assert.AreEqual(80, bcdText.Length);
+         Assert.AreEqual("00670001 01670001 02670001 03670001 04670001 05670002 06670002 07670002 08670002 09670002".Replace(" ", ""), bcdText);
+      }
+      
+      [TestMethod]
+      public void ZerothNegativeValues()
+      {
+         Encoder encoder = new Encoder(51);
+         string bcdText;
+
+         encoder.TemperatureAdd(0, 0.0f);
+         encoder.TemperatureAdd(1, -0.1f);
+         encoder.TemperatureAdd(2, -0.2f);
+         encoder.TemperatureAdd(3, -0.3f);
+         encoder.TemperatureAdd(4, -0.4f);
+         encoder.TemperatureAdd(5, -0.5f);
+         encoder.TemperatureAdd(6, -0.6f);
+         encoder.TemperatureAdd(7, -0.7f);
+         encoder.TemperatureAdd(8, -0.8f);
+         encoder.TemperatureAdd(9, -0.9f);
+         bcdText = encoder.Bcd();
+
+         Assert.AreEqual(80, bcdText.Length);
+         Assert.AreEqual("00670000 0167FFFF 0267FFFE 0367FFFD 0467FFFC 0567FFFB 0667FFFA 0767FFF9 0867FFF8 0967FFF7".Replace(" ", ""), bcdText);
+      }
+
+      [TestMethod]
+      public void ZerothNegativeValuesRounding()
+      {
+         Encoder encoder = new Encoder(51);
+         string bcdText;
+
+         encoder.TemperatureAdd(0, 0.0f);
+         encoder.TemperatureAdd(1, -0.1f);
+         encoder.TemperatureAdd(2, -0.12f);
+         encoder.TemperatureAdd(3, -0.13f);
+         encoder.TemperatureAdd(4, -0.14f);
+         encoder.TemperatureAdd(5, -0.15f);
+         encoder.TemperatureAdd(6, -0.16f);
+         encoder.TemperatureAdd(7, -0.17f);
+         encoder.TemperatureAdd(8, -0.18f);
+         encoder.TemperatureAdd(9, -0.19f);
+         bcdText = encoder.Bcd();
+
+         Assert.AreEqual(80, bcdText.Length);
+         Assert.AreEqual("00670000 0167FFFF 0267FFFF 0367FFFF 0467FFFF 0567FFFE 0667FFFE 0767FFFE 0867FFFE 0967FFFE".Replace(" ", ""), bcdText);
+      }
 
       [TestMethod]
       public void ChannelMinimum()
       {
-         Encoder encoder = new Encoder(3);
-         /*
-         encoder.DigitalInputAdd(0, true);
-         */
+         Encoder encoder = new Encoder(4);
+
+         encoder.TemperatureAdd(0, 1.23f);
+
+         string bcdText = encoder.Bcd();
+
+         Assert.AreEqual("0067000C".Replace(" ", ""), bcdText);
       }
 
       [TestMethod]
       public void ChannelMaximum()
       {
-         Encoder encoder = new Encoder(3);
-         /*
-         encoder.DigitalInputAdd(64, true);
+         Encoder encoder = new Encoder(4);
+
+         encoder.TemperatureAdd(64, 1.23f);
 
          string bcdText = encoder.Bcd();
 
-         Assert.AreEqual("400001", bcdText);
-         */
+         Assert.AreEqual("4067000C".Replace(" ", ""), bcdText);
       }
 
       [ExpectedException(typeof(ArgumentException))]
       [TestMethod]
-      public void ChannelToLarge()
+      public void ChannelTooLarge()
       {
-         Encoder encoder = new Encoder(3);
+         Encoder encoder = new Encoder(4);
 
          encoder.TemperatureAdd(65, 0.0f);
       }

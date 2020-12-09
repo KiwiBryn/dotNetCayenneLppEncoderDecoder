@@ -212,7 +212,7 @@ namespace devMobile.IoT.CayenneLpp
          IsChannelNumberValid(channel);
          IsBfferSizeSufficient(Enumerations.DataType.Temperature);
 
-         short val = (short)(celsius * 10.0f);
+         short val = (short)Math.Round(celsius * 10.0f);
 
          buffer[index++] = channel;
          buffer[index++] = (byte)Enumerations.DataType.Temperature;

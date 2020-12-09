@@ -37,5 +37,14 @@ namespace devMobile.IoT.CayenneLpp
       public const byte BarometricPressureSize = 4;
       public const byte GyrometerSize = 8;
       public const byte GpsSize = 11;
+
+      public const float LatitudeMinimum = -90.0f;
+      public const float LatitudeMaximum = 90.0f;
+      public const float LongitudeMinimum = -180.0f;
+      public const float LongitudeMaximum = 180.0f;
+
+      public const float AltitudeMinimum = -100.0f;
+      public const float AltitudeMaximum = 15000.0f;
+
    }
 }

@@ -283,14 +283,29 @@ namespace devMobile.IoT.CayenneLpp
          buffer[index++] = (byte)valZ;
       }
 
-      public void GpsLocationAdd(byte channel, float latitude, float longitude, float meters)
+      public void GpsLocationAdd(byte channel, float latitude, float longitude, float altitude)
       {
          IsChannelNumberValid(channel);
          IsBfferSizeSufficient(Enumerations.DataType.Gps);
 
-         int lat = (int)(latitude * 10000.0f);
-         int lon = (int)(longitude * 10000.0f);
-         int alt = (int)(meters * 100);
+         if ((latitude < Constants.LatitudeMinimum ) || (latitude > Constants.LatitudeMaximum))
+         {
+            throw new ArgumentException($"Latitude must be between {Constants.LatitudeMinimum} and {Constants.LatitudeMaximum}", "latitude");
+         }
+
+         if ((latitude < Constants.LongitudeMinimum) || (latitude > Constants.LongitudeMaximum))
+         {
+            throw new ArgumentException($"Longitude must be between {Constants.LongitudeMinimum} and {Constants.LongitudeMaximum}", "latitude");
+         }
+
+         if ((altitude < Constants.AltitudeMinimum) || (altitude > Constants.AltitudeMaximum))
+         {
+            throw new ArgumentException($"Altitude must be between {Constants.AltitudeMinimum} and {Constants.AltitudeMaximum}", "altitude");
+         }
+
+         int lat = (int)Math.Round(latitude * 10000.0f);
+         int lon = (int)Math.Round(longitude * 10000.0f);
+         int alt = (int)Math.Round(altitude * 100.0f);
 
          buffer[index++] = channel;
          buffer[index++] = (byte)Enumerations.DataType.Gps;

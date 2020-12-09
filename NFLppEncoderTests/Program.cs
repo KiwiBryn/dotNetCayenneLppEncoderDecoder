@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-// nanoff --target ST_STM32F429I_DISCOVERY --update
+// nanoff --target ST_STM32F769I_DISCOVERY --update
 //
 namespace devMobile.IoT.CayenneLpp.NFLppEncoderTests
 {
@@ -26,7 +26,7 @@ namespace devMobile.IoT.CayenneLpp.NFLppEncoderTests
    {
       public static void Main()
       {
-         Debug.WriteLine("Hello from nanoFramework!");
+         Debug.WriteLine("devMobile.IoT.CayenneLpp.NFLppEncoderTests starting");
 
          Encoder encoder = new Encoder(51);
 

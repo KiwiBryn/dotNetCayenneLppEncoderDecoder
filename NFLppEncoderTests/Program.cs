@@ -34,9 +34,9 @@ namespace devMobile.IoT.CayenneLpp.NFLppEncoderTests
 
          string bcdText = encoder.Bcd();
 
-         Debug.Assert(22==bcdText.Length );
+         Debug.Assert(22==bcdText.Length, "Invalid BCD payload length");
 
-         Debug.Assert("018806765FF2960A0003E8" == bcdText);
+         Debug.Assert("018806765FF2960A0003E8" == bcdText, "Invalid BCD payload");
       }
    }
 }

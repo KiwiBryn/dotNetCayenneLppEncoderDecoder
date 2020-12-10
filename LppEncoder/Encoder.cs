@@ -293,9 +293,9 @@ namespace devMobile.IoT.CayenneLpp
             throw new ArgumentException($"Latitude must be between {Constants.LatitudeMinimum} and {Constants.LatitudeMaximum}", "latitude");
          }
 
-         if ((latitude < Constants.LongitudeMinimum) || (latitude > Constants.LongitudeMaximum))
+         if ((longitude < Constants.LongitudeMinimum) || (longitude > Constants.LongitudeMaximum))
          {
-            throw new ArgumentException($"Longitude must be between {Constants.LongitudeMinimum} and {Constants.LongitudeMaximum}", "latitude");
+            throw new ArgumentException($"Longitude must be between {Constants.LongitudeMinimum} and {Constants.LongitudeMaximum}", "longitude");
          }
 
          if ((altitude < Constants.AltitudeMinimum) || (altitude > Constants.AltitudeMaximum))

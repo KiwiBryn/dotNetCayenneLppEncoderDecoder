@@ -120,14 +120,47 @@ namespace devMobile.IoT.CayenneLpp
       }
 
       /// <summary>
-      /// 
+      /// Digital input boolean value
       /// </summary>
       /// <param name="channel">Uniquely identifies each sensor in the device across frames</param>
       /// <param name="value">boolean value, true or false</param>
-      public void DigitalInputAdd(byte channel, bool value)
+      public void DigitalInputAddA(byte channel, bool value)
       {
          IsChannelNumberValid(channel);
          IsBufferSizeSufficient(Enumerations.DataType.DigitalInput);
+
+         buffer[index++] = channel;
+         buffer[index++] = (byte)Enumerations.DataType.DigitalInput;
+
+         // I know this is fugly but it works on all platforms
+         if (value)
+         {
+            buffer[index++] = 1;
+         }
+         else
+         {
+            buffer[index++] = 0;
+         }
+      }
+
+      /// <summary>
+      /// Digital input boolean value
+      /// </summary>
+      /// <param name="channel">Uniquely identifies each sensor in the device across frames</param>
+      /// <param name="value">boolean value, true or false</param>
+      public void DigitalInputAddB(byte channel, bool value)
+      {
+         #region Guard conditions
+         if ((channel < Constants.ChannelMinimum) || (channel > Constants.ChannelMaximum))
+         {
+            throw new ArgumentException($"channel must be between {Constants.ChannelMinimum} and {Constants.ChannelMaximum}", "channel");
+         }
+
+         if ((index + Constants.DigitalInputSize) > buffer.Length)
+         {
+            throw new ApplicationException($"Datatype DigitalInput insufficent buffer capacity, {buffer.Length - index} bytes available");
+         }
+         #endregion
 
          buffer[index++] = channel;
          buffer[index++] = (byte)Enumerations.DataType.DigitalInput;

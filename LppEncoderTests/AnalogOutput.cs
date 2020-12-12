@@ -27,13 +27,13 @@ namespace devMobile.IoT.CayenneLpp
       {
          Encoder encoder = new Encoder(4);
 
-         encoder.AnalogInputAdd(0, 0.0f);
+         encoder.AnalogOutputAdd(0, 0.0f);
 
          string bcdText = encoder.Bcd();
 
          Assert.AreEqual(8, bcdText.Length);
 
-         Assert.AreEqual("00020000", bcdText);
+         Assert.AreEqual("00030000", bcdText);
       }
    }
 }

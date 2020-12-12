@@ -16,6 +16,12 @@
 // Inspired by https://community.mydevices.com/t/cayenne-lpp-2-0/7510
 //             https://developers.mydevices.com/cayenne/docs/lora/#lora-cayenne-low-power-payload
 //    
+// The Cayenne Low Power Payload (LPP) provides a convenient and easy way to send data over LPWAN 
+// networks such as LoRaWAN. The Cayenne LPP is compliant with the payload size restriction, which 
+// can be lowered down to 11 bytes, and allows the device to send multiple sensor data at one time.
+// Additionally, the Cayenne LPP allows the device to send different sensor data in different frames. 
+// In order to do that, each sensor data must be prefixed with two bytes:
+
 // Some oddness with casting/conversion so library will work across .NetNF, TinyCLR and WildernessLabs Meadow.
 //
 namespace devMobile.IoT.CayenneLpp
@@ -36,7 +42,7 @@ namespace devMobile.IoT.CayenneLpp
          }
       }
 
-      private void IsBfferSizeSufficient(Enumerations.DataType dataType)
+      private void IsBufferSizeSufficient(Enumerations.DataType dataType)
       {
          byte requiredSpace;
 
@@ -70,7 +76,7 @@ namespace devMobile.IoT.CayenneLpp
                requiredSpace = Constants.AccelerometerSize;
                break;
             case Enumerations.DataType.BarometricPressure:
-               requiredSpace = Constants.AccelerometerSize;
+               requiredSpace = Constants.BarometricPressureSize;
                break;
             case Enumerations.DataType.Gyrometer:
                requiredSpace = Constants.GyrometerSize;
@@ -84,7 +90,7 @@ namespace devMobile.IoT.CayenneLpp
 
          if ((index + requiredSpace) > buffer.Length)
          {
-            throw new ApplicationException($"Datatype {dataType} insufficent buffer capacity");
+            throw new ApplicationException($"Datatype {dataType} insufficent buffer capacity, maximum {buffer.Length} bytes");
          }
       }
 
@@ -113,10 +119,15 @@ namespace devMobile.IoT.CayenneLpp
          return payloadBcd.ToString();
       }
 
+      /// <summary>
+      /// 
+      /// </summary>
+      /// <param name="channel">Uniquely identifies each sensor in the device across frames</param>
+      /// <param name="value">boolean value, true or false</param>
       public void DigitalInputAdd(byte channel, bool value)
       {
          IsChannelNumberValid(channel);
-         IsBfferSizeSufficient(Enumerations.DataType.DigitalInput);
+         IsBufferSizeSufficient(Enumerations.DataType.DigitalInput);
 
          buffer[index++] = channel;
          buffer[index++] = (byte)Enumerations.DataType.DigitalInput;
@@ -132,10 +143,15 @@ namespace devMobile.IoT.CayenneLpp
          }
       }
 
+      /// <summary>
+      /// 
+      /// </summary>
+      /// <param name="channel">Uniquely identifies each sensor in the device across frames</param>
+      /// <param name="value">boolean value, true or false</param>
       public void DigitalOutputAdd(byte channel, bool value)
       {
          IsChannelNumberValid(channel);
-         IsBfferSizeSufficient(Enumerations.DataType.DigitialOutput);
+         IsBufferSizeSufficient(Enumerations.DataType.DigitialOutput);
 
          buffer[index++] = channel;
          buffer[index++] = (byte)Enumerations.DataType.DigitialOutput;
@@ -151,12 +167,17 @@ namespace devMobile.IoT.CayenneLpp
          }
       }
 
+      /// <summary>
+      /// 
+      /// </summary>
+      /// <param name="channel">Uniquely identifies each sensor in the device across frames</param>
+      /// <param name="value">Signed floating point value accourate to 0.01</param>
       public void AnalogInputAdd(byte channel, float value)
       {
          IsChannelNumberValid(channel);
-         IsBfferSizeSufficient(Enumerations.DataType.AnalogOutput);
+         IsBufferSizeSufficient(Enumerations.DataType.AnalogInput);
 
-         short val = (short)(value * 100.0f);
+         short val = (short)Math.Round(value * 100.0);
 
          buffer[index++] = channel;
          buffer[index++] = (byte)Enumerations.DataType.AnalogInput;
@@ -164,12 +185,17 @@ namespace devMobile.IoT.CayenneLpp
          buffer[index++] = (byte)val;
       }
 
+      /// <summary>
+      /// 
+      /// </summary>
+      /// <param name="channel">Uniquely identifies each sensor in the device across frames</param>
+      /// <param name="value">Signed floating value accourate to 0.01</param>
       public void AnalogOutputAdd(byte channel, float value)
       {
          IsChannelNumberValid(channel);
-         IsBfferSizeSufficient(Enumerations.DataType.AnalogOutput);
+         IsBufferSizeSufficient(Enumerations.DataType.AnalogOutput);
 
-         short val = (short)(value * 100.0f);
+         short val = (short)Math.Round(value * 100.0);
 
          buffer[index++] = channel;
          buffer[index++] = (byte)Enumerations.DataType.AnalogOutput;
@@ -177,21 +203,31 @@ namespace devMobile.IoT.CayenneLpp
          buffer[index++] = (byte)val;
       }
 
-      public void LuminosityAdd(byte channel, ushort lux)
+      /// <summary>
+      /// 
+      /// </summary>
+      /// <param name="channel">Uniquely identifies each sensor in the device across frames</param>
+      /// <param name="value">Luminosity expressed in Lux</param>
+      public void LuminosityAdd(byte channel, ushort value)
       {
          IsChannelNumberValid(channel);
-         IsBfferSizeSufficient(Enumerations.DataType.Luminosity);
+         IsBufferSizeSufficient(Enumerations.DataType.Luminosity);
 
          buffer[index++] = channel;
          buffer[index++] = (byte)Enumerations.DataType.Luminosity;
-         buffer[index++] = (byte)(lux >> 8);
-         buffer[index++] = (byte)lux;
+         buffer[index++] = (byte)(value >> 8);
+         buffer[index++] = (byte)value;
       }
 
+      /// <summary>
+      /// 
+      /// </summary>
+      /// <param name="channel">Uniquely identifies each sensor in the device across frames</param>
+      /// <param name="value">boolean value indicating presence, true or false</param>
       public void PresenceAdd(byte channel, bool value)
       {
          IsChannelNumberValid(channel);
-         IsBfferSizeSufficient(Enumerations.DataType.Presence);
+         IsBufferSizeSufficient(Enumerations.DataType.Presence);
 
          buffer[index++] = channel;
          buffer[index++] = (byte)Enumerations.DataType.Presence;
@@ -207,12 +243,17 @@ namespace devMobile.IoT.CayenneLpp
          }
       }
 
-      public void TemperatureAdd(byte channel, float celsius)
+      /// <summary>
+      /// 
+      /// </summary>
+      /// <param name="channel">Uniquely identifies each sensor in the device across frames</param>
+      /// <param name="value">Temperature in °C, accurate to 0.01°C</param>
+      public void TemperatureAdd(byte channel, float value)
       {
          IsChannelNumberValid(channel);
-         IsBfferSizeSufficient(Enumerations.DataType.Temperature);
+         IsBufferSizeSufficient(Enumerations.DataType.Temperature);
 
-         short val = (short)Math.Round(celsius * 10.0f);
+         short val = (short)Math.Round(value * 10.0);
 
          buffer[index++] = channel;
          buffer[index++] = (byte)Enumerations.DataType.Temperature;
@@ -220,26 +261,38 @@ namespace devMobile.IoT.CayenneLpp
          buffer[index++] = (byte)val;
       }
 
-      public void RelativeHumidityAdd(byte channel, float relativeHumidity)
+      /// <summary>
+      /// 
+      /// </summary>
+      /// <param name="channel">Uniquely identifies each sensor in the device across frames</param>
+      /// <param name="value">Relative hmidity in %, accurate to 0.5%</param>
+      public void RelativeHumidityAdd(byte channel, float value)
       {
          IsChannelNumberValid(channel);
-         IsBfferSizeSufficient(Enumerations.DataType.RelativeHumidity);
+         IsBufferSizeSufficient(Enumerations.DataType.RelativeHumidity);
 
-         byte val = (byte)(relativeHumidity * 2.0f);
+         byte val = (byte)Math.Round(value * 2.0);
 
          buffer[index++] = channel;
          buffer[index++] = (byte)Enumerations.DataType.RelativeHumidity;
          buffer[index++] = val;
       }
 
+      /// <summary>
+      /// 
+      /// </summary>
+      /// <param name="channel">Uniquely identifies each sensor in the device across frames</param>
+      /// <param name="x">X axis acceleration in G</param>
+      /// <param name="y">Y axis acceleration in G</param>
+      /// <param name="z">Z axis acceleration in G</param>
       public void AccelerometerAdd(byte channel, float x, float y, float z)
       {
          IsChannelNumberValid(channel);
-         IsBfferSizeSufficient(Enumerations.DataType.Accelerometer);
+         IsBufferSizeSufficient(Enumerations.DataType.Accelerometer);
 
-         short valX = (short)(x * 1000.0f);
-         short valY = (short)(y * 1000.0f);
-         short valZ = (short)(z * 1000.0f);
+         short valX = (short)Math.Round(x * 1000.0);
+         short valY = (short)Math.Round(y * 1000.0);
+         short valZ = (short)Math.Round(z * 1000.0);
 
          buffer[index++] = channel;
          buffer[index++] = (byte)Enumerations.DataType.Accelerometer;
@@ -251,12 +304,17 @@ namespace devMobile.IoT.CayenneLpp
          buffer[index++] = (byte)(valZ);
       }
 
-      public void BarometricPressureAdd(byte channel, float hpa)
+      /// <summary>
+      /// 
+      /// </summary>
+      /// <param name="channel">Uniquely identifies each sensor in the device across frames</param>
+      /// <param name="value">Barometric pressure in hectopascals(hPa), accurate to 0.01hPa</param>
+      public void BarometricPressureAdd(byte channel, float value)
       {
          IsChannelNumberValid(channel);
-         IsBfferSizeSufficient(Enumerations.DataType.BarometricPressure);
+         IsBufferSizeSufficient(Enumerations.DataType.BarometricPressure);
 
-         short val = (short)(hpa * 10.0f);
+         short val = (short)Math.Round(value * 10.0);
 
          buffer[index++] = channel;
          buffer[index++] = (byte)Enumerations.DataType.BarometricPressure;
@@ -264,14 +322,21 @@ namespace devMobile.IoT.CayenneLpp
          buffer[index++] = (byte)val;
       }
 
+      /// <summary>
+      /// 
+      /// </summary>
+      /// <param name="channel">Uniquely identifies each sensor in the device across frames</param>
+      /// <param name="x">X Axis rate expressed in °/sec, accurate to 0.01°/sec</param>
+      /// <param name="y">X Axis rate expressed in °/sec, accurate to 0.01°/sec</param>
+      /// <param name="z">X Axis rate expressed in °/sec, accurate to 0.01°/sec</param>
       public void GyrometerAdd(byte channel, float x, float y, float z)
       {
          IsChannelNumberValid(channel);
-         IsBfferSizeSufficient(Enumerations.DataType.Gyrometer);
+         IsBufferSizeSufficient(Enumerations.DataType.Gyrometer);
 
-         short valX = (short)(x * 100.0f);
-         short valY = (short)(y * 100.0f);
-         short valZ = (short)(z * 100.0f);
+         short valX = (short)Math.Round(x * 100.0);
+         short valY = (short)Math.Round(y * 100.0);
+         short valZ = (short)Math.Round(z * 100.0);
 
          buffer[index++] = channel;
          buffer[index++] = (byte)Enumerations.DataType.Gyrometer;
@@ -283,10 +348,17 @@ namespace devMobile.IoT.CayenneLpp
          buffer[index++] = (byte)valZ;
       }
 
+      /// <summary>
+      /// 
+      /// </summary>
+      /// <param name="channel">Uniquely identifies each sensor in the device across frames</param>
+      /// <param name="latitude">Latitude in decimal degress, accurate to 0.0001°</param>
+      /// <param name="longitude">Longitude in decimal degress, accurate to 0.0001°</param>
+      /// <param name="altitude">Altitude in meters, accurate to 0.01M</param>
       public void GpsLocationAdd(byte channel, float latitude, float longitude, float altitude)
       {
          IsChannelNumberValid(channel);
-         IsBfferSizeSufficient(Enumerations.DataType.Gps);
+         IsBufferSizeSufficient(Enumerations.DataType.Gps);
 
          if ((latitude < Constants.LatitudeMinimum ) || (latitude > Constants.LatitudeMaximum))
          {
@@ -303,9 +375,9 @@ namespace devMobile.IoT.CayenneLpp
             throw new ArgumentException($"Altitude must be between {Constants.AltitudeMinimum} and {Constants.AltitudeMaximum}", "altitude");
          }
 
-         int lat = (int)Math.Round(latitude * 10000.0f);
-         int lon = (int)Math.Round(longitude * 10000.0f);
-         int alt = (int)Math.Round(altitude * 100.0f);
+         int lat = (int)Math.Round(latitude * 10000.0);
+         int lon = (int)Math.Round(longitude * 10000.0);
+         int alt = (int)Math.Round(altitude * 100.0);
 
          buffer[index++] = channel;
          buffer[index++] = (byte)Enumerations.DataType.Gps;
